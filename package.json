@@ -1,7 +1,7 @@
 {
   "name": "cybercat",
   "version": "1.0.0",
-  "description": "",
+  "description": "CasketFM Spotify/Last.fm Discord bot and auth server.",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
