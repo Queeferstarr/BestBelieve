@@ -3,7 +3,7 @@ const User = require('../models/user');
 module.exports = {
     name: 'devresetspotify',
     description: 'Developer only: Reset the Spotify data for a user.',
-    usage: '!devresetspotify <@user>',
+    usage: '!devresetspotify <user>',
     aliases: ['resetspotify'],
     slash: true,
     async execute(client, ctx, args) {
@@ -40,9 +40,9 @@ module.exports = {
     },
     options: [
         {
-            name: 'user',
+            name: 'user', // must be all lowercase, no special characters
             description: 'The user to reset',
-            type: 6,
+            type: 6, // USER type
             required: false
         }
     ]
