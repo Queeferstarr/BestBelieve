@@ -8,9 +8,9 @@ const app = express();
 const PORT = 8888;
 
 const spotifyApi = new SpotifyWebApi({
-  clientId: '31dba4a8030941a384f4bddd618edb5c',
-  clientSecret: '4c263a550be941678f7a8a637d7db010',
-  redirectUri: 'https://localhost:8888/callback'
+  clientId: process.env.SPOTIFY_CLIENT_ID,
+  clientSecret: process.env.SPOTIFY_CLIENT_SECRET,
+  redirectUri: process.env.SPOTIFY_REDIRECT_URI
 });
 
 app.get('/login', (req, res) => {
@@ -49,5 +49,5 @@ app.get('/callback', async (req, res) => {
 });
 
 app.listen(PORT, () => {
-  console.log(`Spotify auth server running on https://localhost:${PORT}`);
+  console.log(`Spotify auth server running on ${process.env.SPOTIFY_REDIRECT_URI.replace('/callback', '')}`);
 });
