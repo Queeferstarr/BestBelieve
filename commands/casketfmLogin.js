@@ -8,7 +8,7 @@ module.exports = {
     slash: true,
     async execute(client, ctx, args) {
         const userId = ctx.author ? ctx.author.id : ctx.user.id;
-        const loginUrl = `https://localhost:8888/login?state=${userId}`;
+    const loginUrl = `https://coffinfm.onrender.com/login?state=${userId}`;
         const embed = new EmbedBuilder()
             .setTitle('CasketFM Spotify Login')
             .setDescription(`To enable Spotify scrobbling, [click here to link your Spotify account](${loginUrl}).`)

@@ -5,7 +5,7 @@ const User = require('./models/user');
 require('dotenv').config();
 
 const app = express();
-const PORT = 8888;
+const PORT = process.env.PORT || 8888;
 
 const spotifyApi = new SpotifyWebApi({
   clientId: process.env.SPOTIFY_CLIENT_ID,
@@ -49,5 +49,5 @@ app.get('/callback', async (req, res) => {
 });
 
 app.listen(PORT, () => {
-  console.log(`Spotify auth server running on ${process.env.SPOTIFY_REDIRECT_URI.replace('/callback', '')}`);
+  console.log(`Spotify auth server running on port ${PORT}`);
 });
