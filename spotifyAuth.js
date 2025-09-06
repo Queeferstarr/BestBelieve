@@ -1,4 +1,4 @@
-// Minor tweak for redeploy
+// Render deployment: https://coffinfm1.onrender.com (SPOTIFY_REDIRECT_URI must match)
 const express = require('express')
 const SpotifyWebApi = require('spotify-web-api-node');
 const mongoose = require('mongoose');
