@@ -17,6 +17,8 @@ client.aliases = new Collection();
 // Handlers
 require('./handlers/commandHandler')(client);
 require('./handlers/eventHandler')(client);
+// Start Last.fm scrobble watcher for bot status
+require('./events/trackScrobble').execute(client);
 
 // MongoDB Connection
 mongoose.connect(process.env.MONGO_URI)

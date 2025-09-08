@@ -10,12 +10,20 @@ module.exports = {
     usage: '!np [@user]',
     aliases: ['nowplaying'],
     slash: true,
-    userCommand: true,
-    async execute(client, ctx, args) {
+    userCommand: {
+        name: 'Now Playing (Last.fm)',
+        type: 2 // USER context menu
+    },
+    async execute(client, ctx, args, overrideUserId) {
         // Support both message and interaction
         const isInteraction = ctx.isChatInputCommand?.() || ctx.isUserContextMenuCommand?.();
         let userId, displayName;
-        if (isInteraction && ctx.isUserContextMenuCommand?.()) {
+        if (overrideUserId) {
+            userId = overrideUserId;
+            // Try to get display name from client cache
+            const member = ctx.guild?.members?.cache?.get(userId) || client.users.cache.get(userId);
+            displayName = member ? (member.displayName || member.username) : 'ToxicHumans';
+        } else if (isInteraction && ctx.isUserContextMenuCommand?.()) {
             userId = ctx.targetUser.id;
             displayName = ctx.targetUser.username;
         } else if (isInteraction && ctx.options?.getUser('user')) {

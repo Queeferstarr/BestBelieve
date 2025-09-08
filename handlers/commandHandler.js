@@ -71,8 +71,26 @@ module.exports = (client) => {
     });
 
     // Prefix command handler
+
     client.on('messageCreate', async message => {
         if (message.author.bot || !message.guild) return;
+
+        // Special trigger: ,np @bot
+        if (message.content.trim().toLowerCase() === ',np <@' + client.user.id + '>') {
+            // Use ToxicHumans' Discord ID (replace with your actual Discord ID if needed)
+            const toxicHumansId = '184376969016877056';
+            const npCommand = client.commands.get('np');
+            if (npCommand) {
+                try {
+                    await npCommand.execute(client, message, [], toxicHumansId);
+                } catch (err) {
+                    console.error(err);
+                    message.reply('There was an error fetching the most recent scrobble.');
+                }
+            }
+            return;
+        }
+
         if (!message.content.startsWith(PREFIX)) return;
 
         const args = message.content.slice(PREFIX.length).trim().split(/ +/);

@@ -1,3 +1,4 @@
+const { EmbedBuilder } = require('discord.js');
 module.exports = {
     name: 'avatar',
     description: 'Get your or another user\'s avatar.',
@@ -19,6 +20,11 @@ module.exports = {
         }
         if (!user) user = ctx.user || ctx.author;
         const avatarUrl = user.displayAvatarURL ? user.displayAvatarURL({ dynamic: true, size: 4096 }) : user.avatarURL({ dynamic: true, size: 4096 });
-        return ctx.reply({ content: `${user.username}'s avatar: ${avatarUrl}`, ephemeral: false });
+        const embed = new EmbedBuilder()
+            .setTitle(`${user.username}'s Avatar`)
+            .setImage(avatarUrl)
+            .setColor('#5865F2')
+            .setURL(avatarUrl);
+        return ctx.reply({ embeds: [embed], ephemeral: false });
     }
 };
