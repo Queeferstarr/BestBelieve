@@ -49,7 +49,15 @@ module.exports = {
 
         // Multiplayer join phase
         const participants = [{ id: userId, hand: [drawCard(), drawCard()], stand: false, double: false, bet }];
-        const joinMsg = await ctx.reply({ content: `Blackjack started for $${bet}! Others have 30 seconds to join with /blackjack ${bet}.`, ephemeral: false });
+        const joinMsg = await ctx.reply({
+            embeds: [
+                new EmbedBuilder()
+                    .setTitle('Blackjack - Join Game')
+                    .setDescription(`Blackjack started for **$${bet}**!\nUse /blackjack ${bet} in the next **30 seconds** to join.\n\nGame will start soon...`)
+                    .setColor('#2ecc71')
+            ],
+            ephemeral: false
+        });
         // For now, only the command user plays. (Expand: add join logic here)
         await new Promise(res => setTimeout(res, 30000));
 
@@ -71,14 +79,26 @@ module.exports = {
         let turn = 0;
         let finished = Array(active.length).fill(false);
 
+        function getInstructions(player, isTurn) {
+            if (!isTurn) return '';
+            let msg = `It's your turn! Use the buttons below to play.\n`;
+            msg += `**Hit**: Draw a card\n**Stand**: End your turn\n`;
+            if (player.hand.length === 2 && !player.double && player.bet * 2 <= (player.balance || 0) + player.bet) {
+                msg += '**Double Down**: Double your bet, draw one card, and end your turn\n';
+            }
+            return msg;
+        }
+
         async function updateGame(interaction) {
             const embed = new EmbedBuilder()
                 .setTitle('Blackjack')
+                .setColor('#5865F2')
                 .setDescription(active.map((p, i) => {
                     const turnMark = i === turn ? '➡️ ' : '';
                     return `${turnMark}<@${p.id}>: ${handString(p.hand)} (Total: ${handValue(p.hand)})${p.stand ? ' 🛑' : ''}${p.double ? ' (Doubled)' : ''}`;
                 }).join('\n'))
-                .addFields({ name: 'Bot Hand', value: `${botHand[0]}, ?` });
+                .addFields({ name: 'Bot Hand', value: `${botHand[0]}, ?` })
+                .setFooter({ text: getInstructions(active[turn], true) });
             const row = new ActionRowBuilder().addComponents(
                 new ButtonBuilder().setCustomId('hit').setLabel('Hit').setStyle(ButtonStyle.Primary).setDisabled(finished[turn] || handValue(active[turn].hand) >= 21),
                 new ButtonBuilder().setCustomId('stand').setLabel('Stand').setStyle(ButtonStyle.Secondary).setDisabled(finished[turn]),
