@@ -35,10 +35,16 @@ module.exports = {
         }
     ],
     async execute(client, ctx, args) {
-        const bet = parseInt(args && args[0] ? args[0] : ctx.options?.getInteger('bet'), 10);
-        if (isNaN(bet) || bet < 1) return ctx.reply({ content: 'Minimum bet is $1.', ephemeral: true });
+        let betArg = args && args[0] ? args[0] : ctx.options?.getInteger('bet');
         const userId = ctx.user ? ctx.user.id : ctx.author.id;
         let user = await EconomyUser.findOne({ discordId: userId });
+        let bet;
+        if (typeof betArg === 'string' && betArg.toLowerCase() === 'all') {
+            bet = user ? user.balance : 0;
+        } else {
+            bet = parseInt(betArg, 10);
+        }
+        if (isNaN(bet) || bet < 1) return ctx.reply({ content: 'Minimum bet is $1.', ephemeral: true });
         if (!user || user.balance < bet) return ctx.reply({ content: 'Insufficient funds.', ephemeral: true });
 
         // Multiplayer join phase
