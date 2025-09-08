@@ -8,7 +8,7 @@ const userSchema = new mongoose.Schema({
         of: Number,
         default: {}
     }
-    // Spotify and CasketFM fields removed
+    // ...existing code...
 });
 
 module.exports = mongoose.model('User', userSchema);
