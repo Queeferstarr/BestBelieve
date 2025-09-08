@@ -24,27 +24,43 @@ app.get('/login', (req, res) => {
     'user-read-recently-played',
     'user-modify-playback-state'
   ];
+  console.log('[AUTH] /login called');
+  console.log('[AUTH] Query params:', req.query);
+  console.log('[AUTH] Using redirectUri:', process.env.SPOTIFY_REDIRECT_URI);
   const authorizeURL = spotifyApi.createAuthorizeURL(scopes, req.query.state || '');
+  console.log('[AUTH] Redirecting to:', authorizeURL);
   res.redirect(authorizeURL);
 });
 
 app.get('/callback', async (req, res) => {
   const code = req.query.code;
   const discordId = req.query.state; // Pass Discord ID as state
+  console.log('[AUTH] /callback called');
+  console.log('[AUTH] Query params:', req.query);
+  if (!code) {
+    console.error('[AUTH] No code provided in callback');
+    return res.status(400).send('No code provided.');
+  }
+  if (!discordId) {
+    console.error('[AUTH] No Discord ID (state) provided in callback');
+    return res.status(400).send('No Discord ID provided.');
+  }
   try {
     const data = await spotifyApi.authorizationCodeGrant(code);
     const { access_token, refresh_token, expires_in } = data.body;
+    console.log('[AUTH] Received tokens:', { access_token, refresh_token, expires_in });
     // Save tokens to user in DB
     if (discordId) {
-      await User.updateOne(
+      const updateResult = await User.updateOne(
         { discordId },
         { $set: { spotify: { access_token, refresh_token, expires_in, updated: new Date() } } },
         { upsert: true }
       );
+      console.log('[AUTH] MongoDB update result:', updateResult);
     }
     res.send('Spotify authentication successful! You can close this window.');
   } catch (err) {
-    console.error(err);
+    console.error('[AUTH] Error in /callback:', err);
     res.status(500).send('Spotify authentication failed.');
   }
 });
